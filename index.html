@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>นักสืบไซเบอร์ พิชิตโลกอินเทอร์เน็ต (8 ด่านภารกิจ)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+        }
+        .tablet-frame {
+            background: #1e293b;
+            border: 12px solid #334155;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0,0,0,0.6);
+        }
+        .pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.92; transform: scale(1.02); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(100,116,139,0.5);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-2 sm:p-4 text-slate-800 select-none">
+
+    <div class="w-full max-w-4xl tablet-frame rounded-[2.5rem] overflow-hidden flex flex-col min-h-[720px] max-h-[92vh] my-auto relative border-slate-700 shadow-2xl">
+        
+        <!-- Tablet Top Header -->
+        <header id="tablet-header" class="bg-slate-900 text-white px-5 py-3 flex flex-wrap items-center justify-between border-b border-slate-700 gap-2 shrink-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
+                <div class="font-bold text-base sm:text-lg text-cyan-400 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    แท็บเล็ตนักสืบไซเบอร์
+                </div>
+            </div>
+            
+            <!-- Player Status & Live Score Bar -->
+            <div id="status-bar" class="hidden flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
+                <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                    <span class="text-slate-400">นักสืบ:</span>
+                    <span id="player-display" class="font-bold text-yellow-400">นักสืบจิ๋ว</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                    <span class="text-slate-400">คะแนนสะสม:</span>
+                    <span id="score-display" class="font-black text-emerald-400 text-base sm:text-lg">0</span>
+                    <span class="text-xs text-slate-400">/100</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Indicator Bar -->
+        <div id="stage-progress-container" class="hidden bg-slate-900 px-5 py-2 border-b border-slate-800 flex items-center gap-3 shrink-0">
+            <span id="stage-title-text" class="text-xs font-bold text-cyan-300 whitespace-nowrap min-w-[110px]">ด่านที่ 1/8</span>
+            <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-700">
+                <div id="progress-bar-fill" class="bg-gradient-to-r from-cyan-400 to-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 12.5%"></div>
+            </div>
+            <span id="stage-points-badge" class="bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 text-[11px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">เต็ม 10 คะแนน</span>
+        </div>
+
+        <!-- Main Application Viewport -->
+        <main id="app-viewport" class="flex-1 bg-slate-100 p-4 sm:p-6 flex flex-col justify-between overflow-y-auto custom-scrollbar relative">
+            
+            <!-- SCREEN 0: Welcome & Player Registration -->
+            <section id="screen-welcome" class="flex flex-col items-center justify-center flex-1 text-center py-4 my-auto">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 mb-4 bg-cyan-500/10 rounded-full flex items-center justify-center border-2 border-cyan-400/30 pulse-slow">
+                    <svg class="w-12 h-12 sm:w-16 sm:h-16 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-800 mb-2">นักสืบไซเบอร์ พิชิตโลกอินเทอร์เน็ต</h1>
+                <p class="text-slate-600 max-w-md mb-6 text-xs sm:text-base leading-relaxed">
+                    พิชิตภารกิจสืบคดี 8 ด่าน พิสูจน์ทักษะการใช้อินเทอร์เน็ต ป้องกันภัยไซเบอร์ และสะสมคะแนนเต็ม 100 คะแนน!
+                </p>
+
+                <!-- Stage List Roadmap Preview -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl mb-6 text-left text-xs">
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">1.</span> ค้นหาความรู้ <span class="text-slate-400">(10)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">2.</span> ป้องกันภัยไซเบอร์ <span class="text-slate-400">(15)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">3.</span> ผู้พิทักษ์ออนไลน์ <span class="text-slate-400">(10)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">4.</span> ตามล่าข้อมูล <span class="text-slate-400">(15)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">5.</span> จับผิดข่าวปลอม <span class="text-slate-400">(15)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">6.</span> รหัสลับพิทักษ์ข้อมูล <span class="text-slate-400">(10)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">7.</span> กับดักลิงก์อันตราย <span class="text-slate-400">(15)</span></div>
+                    <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm"><span class="font-bold text-cyan-600">8.</span> มารยาทดิจิทัล <span class="text-slate-400">(10)</span></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
+                    <label class="block text-left font-bold text-slate-700 mb-2 text-sm">ชื่อนักสืบของคุณ:</label>
+                    <input type="text" id="player-name-input" placeholder="พิมพ์ชื่อนักสืบที่นี่..." class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:outline-none focus:border-cyan-500 text-lg font-semibold mb-4 text-center">
+                    
+                    <button onclick="startGame()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transform active:scale-95 transition text-base sm:text-lg flex items-center justify-center gap-2">
+                        <span>เริ่มสืบคดี ด่านที่ 1</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- STAGE 1: นักสืบค้นหาความรู้ (10 คะแนน) -->
+            <section id="screen-stage1" class="hidden flex-1 flex flex-col justify-between">
+                <div id="stage1-content">
+                    <div class="bg-cyan-900/10 border-l-4 border-cyan-500 p-3.5 rounded-r-xl mb-4">
+                        <span class="bg-cyan-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 1 (10 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">ช่วยชาวเมืองค้นหา "วิธีดูแลแมวป่วยเบื้องต้น"</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">เลือกคำค้นหา (Keyword) ที่ตรงประเด็น และเลือกเว็บไซต์ที่น่าเชื่อถือที่สุด</p>
+                    </div>
+
+                    <div id="stage1-step1" class="space-y-3">
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                            <label class="block text-xs font-bold text-slate-500 mb-2">ช่องค้นหา Search Engine จำลอง:</label>
+                            <div class="flex items-center border-2 border-slate-300 rounded-xl p-3 bg-slate-50">
+                                <svg class="w-5 h-5 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <input type="text" id="search-input-box" readonly placeholder="คลิกเลือกข้อความด้านล่างเพื่อใส่คำค้นหา..." class="w-full bg-transparent font-bold text-slate-700 text-sm focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <button onclick="handleStage1Keyword(1, false)" class="p-3 text-left border-2 border-slate-200 hover:border-cyan-400 rounded-xl transition bg-white font-semibold text-slate-700 text-xs sm:text-sm">
+                                A. แมว
+                            </button>
+                            <button onclick="handleStage1Keyword(2, true)" class="p-3 text-left border-2 border-slate-200 hover:border-cyan-400 rounded-xl transition bg-white font-semibold text-slate-700 text-xs sm:text-sm">
+                                B. วิธีดูแล แมวป่วย
+                            </button>
+                            <button onclick="handleStage1Keyword(3, false)" class="p-3 text-left border-2 border-slate-200 hover:border-cyan-400 rounded-xl transition bg-white font-semibold text-slate-700 text-xs sm:text-sm">
+                                C. ทําอย่างไรดีแมวไม่กินข้าวเลยงงมากช่วยด้วย
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="stage1-step2" class="hidden space-y-2.5">
+                        <div class="text-xs font-bold text-slate-600 mb-1">ผลการค้นหาขึ้นมาแล้ว! คลิกเลือกเว็บไซต์ที่น่าเชื่อถือที่สุด:</div>
+                        
+                        <div onclick="handleStage1Website('A', true)" class="p-3.5 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-2xl cursor-pointer transition shadow-sm">
+                            <div class="text-xs text-emerald-700 font-bold">https://www.cat-health.go.th</div>
+                            <div class="text-sm font-bold text-blue-700">กรมปศุสัตว์ - คู่มือการดูแลสุขภาพแมวป่วยเบื้องต้น</div>
+                            <div class="text-xs text-slate-500 mt-0.5">หน่วยงานรัฐบาล (.go.th) มีสัตวแพทย์รับรองข้อมูล</div>
+                        </div>
+
+                        <div onclick="handleStage1Website('B', false)" class="p-3.5 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-2xl cursor-pointer transition shadow-sm">
+                            <div class="text-xs text-rose-600 font-bold">https://www.free-cat-game-download.net</div>
+                            <div class="text-sm font-bold text-blue-700">ดาวน์โหลดเกมแมวฟรี! รักษาแมวหายทันที 100%</div>
+                            <div class="text-xs text-slate-500 mt-0.5">มีโฆษณาป๊อปอัปเด้งรบกวน ไม่ระบุแหล่งอ้างอิง</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 2: ภารกิจป้องกันภัยไซเบอร์ (15 คะแนน) -->
+            <section id="screen-stage2" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-amber-900/10 border-l-4 border-amber-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 2 (15 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">รับมือภัยคุกคามไซเบอร์กะทันหัน!</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">ตัดสินใจแก้ไขสถานการณ์ป๊อปอัปหลอกลวงและการขอรหัสผ่านในแชท</p>
+                    </div>
+
+                    <div id="stage2-step1">
+                        <div class="bg-gradient-to-br from-rose-500 to-amber-500 p-1 rounded-2xl shadow-md mb-3">
+                            <div class="bg-white p-4 rounded-xl text-center">
+                                <div class="inline-block bg-amber-100 p-2 rounded-full text-amber-600 mb-1 animate-bounce">⚠️</div>
+                                <h3 class="text-base font-black text-rose-600">🎉 ยินดีด้วย! คุณคือผู้โชคดีได้รับแท็บเล็ตฟรี!</h3>
+                                <p class="text-slate-600 text-xs my-1">กรอกชื่อ เบอร์โทร และรหัสผ่านเพื่อยืนยันรับรางวัลทันที!</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <button onclick="handleStage2Popup(true)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                                A. กดปิดหน้าต่างป๊อปอัปทันที ไม่กรอกข้อมูลส่วนตัวใดๆ
+                            </button>
+                            <button onclick="handleStage2Popup(false)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                                B. รีบกรอกรหัสผ่านเพราะอยากได้แท็บเล็ตฟรี
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="stage2-step2" class="hidden">
+                        <div class="bg-slate-800 p-3.5 rounded-2xl shadow-md text-white mb-3">
+                            <div class="flex items-center space-x-2 border-b border-slate-700 pb-2 mb-2">
+                                <div class="w-7 h-7 rounded-full bg-cyan-500 flex items-center justify-center font-bold text-xs">G</div>
+                                <span class="font-bold text-xs text-cyan-300">Gamer_Boy99 (เพื่อนในเกม)</span>
+                            </div>
+                            <p class="text-xs text-slate-200">"ขอยืม Password บัญชีหน่อยสิ จะช่วยเติมเหรียญทองให้ฟรี!"</p>
+                        </div>
+                        <div class="space-y-2">
+                            <button onclick="handleStage2Chat(true)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                                A. ปฏิเสธทันที เพราะรหัสผ่านเป็นความลับส่วนบุคคลห้ามบอกใคร
+                            </button>
+                            <button onclick="handleStage2Chat(false)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                                B. ส่งรหัสผ่านให้ทันทีเพราะอยากได้เหรียญทองฟรี
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 3: ผู้พิทักษ์โลกออนไลน์ (10 คะแนน) -->
+            <section id="screen-stage3" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-purple-900/10 border-l-4 border-purple-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-purple-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 3 (10 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">ผู้พิทักษ์กระดานข่าวชุมชนออนไลน์</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">รับมือกับพฤติกรรมกลั่นแกล้งบนโลกออนไลน์ (Cyberbullying)</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-3">
+                        <div class="text-xs font-bold text-rose-600 mb-1">📌 โพสต์บนเว็บบอร์ดโรงเรียน:</div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm font-semibold text-slate-800">
+                            "ดูรูปตัดต่อตลกๆ หน้าเพื่อนคนนี้สิ โคตรตลกเลย แชร์ไปให้ทุกคนขำกันดีกว่า!"
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button onclick="handleStage3Bullying(true)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                            A. ไม่แชร์ต่อ ตักเตือนผู้โพสต์ และกดรายงาน (Report) โพสต์กลั่นแกล้ง
+                        </button>
+                        <button onclick="handleStage3Bullying(false)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                            B. กดไลก์และกดแชร์ต่อให้เพื่อนๆ เข้ามาร่วมล้อเลียน
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 4: นักสืบตามล่าข้อมูล (15 คะแนน) -->
+            <section id="screen-stage4" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-indigo-900/10 border-l-4 border-indigo-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 4 (15 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">สืบค้นรายงานวิชาการ "พลังงานทดแทน"</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">กรองประเภทไฟล์และช่วงเวลา เพื่อให้ได้เอกสารอ้างอิงที่ถูกต้องสอดคล้องที่สุด</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-3 space-y-2">
+                        <div class="text-xs font-bold text-indigo-700">ภารกิจ: ต้องการไฟล์เอกสารรายงาน (.pdf) เรื่องพลังงานทดแทนล่าสุด</div>
+                        <div class="p-2.5 bg-slate-50 rounded-xl border text-xs text-slate-600">
+                            คำค้นหาปัจจุบัน: <span class="font-bold text-slate-800">พลังงานทดแทน filetype:pdf</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button onclick="handleStage4Data(1, true)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                            A. เลือกไฟล์ [PDF] จากกระทรวงพลังงาน (เผยแพร่ปี 2024 มีอ้างอิงชัดเจน)
+                        </button>
+                        <button onclick="handleStage4Data(2, false)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                            B. เลือกกระทู้คุยเล่นในเว็บบอร์ด (โพสต์เมื่อ 12 ปีที่แล้ว โดยไม่ระบุตัวตน)
+                        </button>
+                        <button onclick="handleStage4Data(3, false)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                            C. เลือกไฟล์เกมแจกฟรีพลังงานทดแทน.exe
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 5: นักจับผิดข่าวปลอม (15 คะแนน) -->
+            <section id="screen-stage5" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-rose-900/10 border-l-4 border-rose-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 5 (15 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">จับผิด Fake News บนฟีดข่าว</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">ตรวจเช็กหัวข้อข่าวและพิจารณาว่าโพสต์ใดคือ "ข่าวปลอม (Fake News)"</p>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div class="bg-white p-3.5 rounded-2xl border-2 border-slate-200 shadow-sm">
+                            <span class="text-[10px] font-bold bg-rose-100 text-rose-600 px-2 py-0.5 rounded">ข่าวสาร A</span>
+                            <p class="text-xs sm:text-sm font-bold text-slate-800 mt-1">"ด่วนที่สุด! กินน้ำมะนาวผสมโซดารักษาโรคร้ายหายขาดใน 3 นาที แชร์ด่วนก่อนโดนลบ!"</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-2xl border-2 border-slate-200 shadow-sm">
+                            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded">ข่าวสาร B</span>
+                            <p class="text-xs sm:text-sm font-bold text-slate-800 mt-1">"กรมอุตุฯ ประกาศเตือนฝนตกหนักบริเวณภาคเหนือ ประชาชนควรพกร่มและระวังน้ำท่วมฉับพลัน"</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 space-y-2">
+                        <button onclick="handleStage5FakeNews('A', true)" class="w-full p-3 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-bold text-slate-700 text-xs sm:text-sm text-left transition">
+                            👉 ระบุว่า "ข่าว A" เป็นข่าวปลอม เพราะใช้คำเกินจริง อ้างอิงไม่ได้ และเร่งรัดให้แชร์
+                        </button>
+                        <button onclick="handleStage5FakeNews('B', false)" class="w-full p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm text-left transition">
+                            👉 ระบุว่า "ข่าว B" เป็นข่าวปลอม
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 6: รหัสลับพิทักษ์ข้อมูล (10 คะแนน) -->
+            <section id="screen-stage6" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-teal-900/10 border-l-4 border-teal-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-teal-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 6 (10 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">สร้างรหัสผ่านที่ปลอดภัย (Strong Password)</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">เลือกรหัสผ่านที่มีความรัดกุม คาดเดายาก ป้องกันการแฮกบัญชี</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-3">
+                        <div class="text-xs font-bold text-slate-500 mb-2">จงเลือกรหัสผ่านที่แข็งแกร่งและปลอดภัยที่สุด:</div>
+                        <div class="space-y-2">
+                            <button onclick="handleStage6Password(1, false)" class="w-full p-3 text-left border-2 border-slate-200 hover:border-rose-400 rounded-xl font-mono font-bold text-slate-700 text-xs sm:text-sm bg-slate-50">
+                                ❌ 123456
+                            </button>
+                            <button onclick="handleStage6Password(2, false)" class="w-full p-3 text-left border-2 border-slate-200 hover:border-rose-400 rounded-xl font-mono font-bold text-slate-700 text-xs sm:text-sm bg-slate-50">
+                                ❌ password2024
+                            </button>
+                            <button onclick="handleStage6Password(3, true)" class="w-full p-3 text-left border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-mono font-bold text-slate-700 text-xs sm:text-sm bg-slate-50">
+                                ✅ C7#mP!9k2$Q
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 7: กับดักลิงก์อันตราย (15 คะแนน) -->
+            <section id="screen-stage7" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-orange-900/10 border-l-4 border-orange-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 7 (15 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">ตรวจสอบลิงก์สุ่มเสี่ยง Phishing</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">มี SMS ส่งลิงก์เข้าสมาร์ตโฟนของคุณ จงวิเคราะห์ว่าลิงก์ใดปลอดภัย</p>
+                    </div>
+
+                    <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-md mb-3 space-y-3">
+                        <div class="text-xs text-orange-400 font-bold">📩 ข้อความ SMS ปริศนา: "บัญชีของคุณมีปัญหา คลิกเพื่อยืนยันตัวตน"</div>
+                        
+                        <div class="space-y-2">
+                            <button onclick="handleStage7Link(1, false)" class="w-full text-left p-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl font-mono text-xs text-rose-300">
+                                🚫 http://www.bank-verify-security-update.xyz/login
+                            </button>
+                            <button onclick="handleStage7Link(2, true)" class="w-full text-left p-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl font-mono text-xs text-emerald-300">
+                                ✅ https://www.bank.co.th
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAGE 8: ฮีโร่มารยาทดิจิทัล (10 คะแนน) -->
+            <section id="screen-stage8" class="hidden flex-1 flex flex-col justify-between">
+                <div>
+                    <div class="bg-blue-900/10 border-l-4 border-blue-500 p-3.5 rounded-r-xl mb-3">
+                        <span class="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wide">ด่าน 8 (10 คะแนน)</span>
+                        <h2 class="text-lg font-bold text-slate-800 mt-1">มารยาทดิจิทัลและการเคารพลิขสิทธิ์</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm">เมื่อต้องการนำรูปภาพสวยๆ จากอินเทอร์เน็ตมาใช้ทำรายงานส่งครู</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-3">
+                        <div class="text-xs font-bold text-slate-700 mb-2">ข้อใดปฏิบัติตามหลัก Netiquette และลิขสิทธิ์ได้ถูกต้องที่สุด:</div>
+                        <div class="space-y-2">
+                            <button onclick="handleStage8Netiquette(true)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-500 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                                A. นำภาพมาใช้ พร้อมเขียนระบุแหล่งที่มา (Credit) อ้างอิงเจ้าของผลงานอย่างสุภาพ
+                            </button>
+                            <button onclick="handleStage8Netiquette(false)" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-rose-400 rounded-xl font-bold text-slate-700 text-xs sm:text-sm transition">
+                                B. บันทึกรูปไปใช้ทันที แอบอ้างว่าเป็นคนวาดเองทั้งหมด
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 9: Final Results & Certificate -->
+            <section id="screen-results" class="hidden flex-1 flex flex-col items-center justify-center text-center py-2 my-auto">
+                <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-2xl border-2 border-slate-200 max-w-lg w-full relative overflow-hidden">
+                    
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">สรุปบันทึกการสืบคดีครบ 8 ด่าน</div>
+                    <h2 class="text-2xl font-black text-slate-800 mb-2">สรุปผลนักสืบไซเบอร์</h2>
+                    
+                    <!-- Badge Icon Box -->
+                    <div id="badge-icon-box" class="my-3 flex justify-center">
+                        <!-- Dynamic Badge injected via JS -->
+                    </div>
+
+                    <div id="badge-title" class="text-lg font-extrabold text-cyan-600 mb-1">เหรียญตรา...</div>
+                    <div id="final-score-text" class="text-3xl font-black text-slate-800 mb-3">0 / 100 คะแนน</div>
+
+                    <!-- Breakdown table of 8 stages -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4 text-xs space-y-1 text-left max-h-48 overflow-y-auto custom-scrollbar">
+                        <div class="font-bold text-slate-700 mb-1 border-b pb-1">รายละเอียดคะแนนแต่ละด่าน:</div>
+                        <div class="flex justify-between"><span>1. นักสืบค้นหาความรู้:</span><span id="score-st1" class="font-bold">0/10</span></div>
+                        <div class="flex justify-between"><span>2. ภารกิจป้องกันภัยไซเบอร์:</span><span id="score-st2" class="font-bold">0/15</span></div>
+                        <div class="flex justify-between"><span>3. ผู้พิทักษ์โลกออนไลน์:</span><span id="score-st3" class="font-bold">0/10</span></div>
+                        <div class="flex justify-between"><span>4. นักสืบตามล่าข้อมูล:</span><span id="score-st4" class="font-bold">0/15</span></div>
+                        <div class="flex justify-between"><span>5. นักจับผิดข่าวปลอม:</span><span id="score-st5" class="font-bold">0/15</span></div>
+                        <div class="flex justify-between"><span>6. รหัสลับพิทักษ์ข้อมูล:</span><span id="score-st6" class="font-bold">0/10</span></div>
+                        <div class="flex justify-between"><span>7. กับดักลิงก์อันตราย:</span><span id="score-st7" class="font-bold">0/15</span></div>
+                        <div class="flex justify-between"><span>8. ฮีโร่มารยาทดิจิทัล:</span><span id="score-st8" class="font-bold">0/10</span></div>
+                    </div>
+
+                    <button onclick="restartGame()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span>เล่นใหม่อีกครั้งเพื่อทำคะแนนเต็ม</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Botty Assistant Feedback Bar -->
+            <div id="botty-box" class="bg-slate-900 text-white p-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3 mt-3 shrink-0">
+                <div class="w-10 h-10 rounded-full bg-cyan-500 flex-shrink-0 flex items-center justify-center border-2 border-cyan-300">
+                    <svg class="w-6 h-6 text-slate-900" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2a1 1 0 011 1v1h3a2 2 0 012 2v2a2 2 0 012 2v7a2 2 0 01-2 2h-1v1a2 2 0 01-2 2H9a2 2 0 01-2-2v-1H6a2 2 0 01-2-2V10a2 2 0 012-2V6a2 2 0 012-2h3V3a1 1 0 011-1zm-3 8a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/>
+                    </svg>
+                </div>
+                <div class="flex-1 text-xs">
+                    <div class="font-bold text-cyan-400 flex items-center gap-1">
+                        <span>บอทตี้ (Botty) ผู้ช่วยนักสืบ</span>
+                    </div>
+                    <p id="botty-message" class="text-slate-200 mt-0.5">สวัสดีครับนักสืบ! พร้อมลุยภารกิจทั้ง 8 ด่านกอบกู้เมืองไซเบอร์ซิตี้กันหรือยังครับ?</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Game State Engine
+        const stageMaxScores = [10, 15, 10, 15, 15, 10, 15, 10];
+        const state = {
+            playerName: "นักสืบจิ๋ว",
+            currentStage: 1,
+            stageScores: [0, 0, 0, 0, 0, 0, 0, 0],
+            stage1Step: 1,
+            stage2Step: 1
+        };
+
+        // Web Audio Synthesizer
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.setValueAtTime(180, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                }
+            } catch (e) {}
+        }
+
+        function speakBotty(text, stateType = 'normal') {
+            const msgEl = document.getElementById('botty-message');
+            msgEl.innerText = text;
+            const box = document.getElementById('botty-box');
+            if (stateType === 'correct') {
+                box.className = "bg-emerald-950 text-white p-3 rounded-2xl shadow-xl border border-emerald-600 flex items-center gap-3 mt-3 shrink-0 transition-all";
+            } else if (stateType === 'wrong') {
+                box.className = "bg-rose-950 text-white p-3 rounded-2xl shadow-xl border border-rose-600 flex items-center gap-3 mt-3 shrink-0 transition-all";
+            } else {
+                box.className = "bg-slate-900 text-white p-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3 mt-3 shrink-0 transition-all";
+            }
+        }
+
+        function getTotalScore() {
+            return state.stageScores.reduce((a, b) => a + b, 0);
+        }
+
+        function updateUI() {
+            document.getElementById('score-display').innerText = getTotalScore();
+            document.getElementById('player-display').innerText = state.playerName;
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('player-name-input').value.trim();
+            if (nameInput) state.playerName = nameInput;
+            
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('status-bar').classList.remove('hidden');
+            document.getElementById('stage-progress-container').classList.remove('hidden');
+            
+            showStage(1);
+        }
+
+        function showStage(stageNum) {
+            state.currentStage = stageNum;
+            
+            // Hide all stage screens
+            for (let i = 1; i <= 8; i++) {
+                const el = document.getElementById(`screen-stage${i}`);
+                if (el) el.classList.add('hidden');
+            }
+            document.getElementById('screen-results').classList.add('hidden');
+
+            if (stageNum <= 8) {
+                const currentEl = document.getElementById(`screen-stage${stageNum}`);
+                if (currentEl) currentEl.classList.remove('hidden');
+
+                // Progress Bar updates
+                const pct = (stageNum / 8) * 100;
+                document.getElementById('progress-bar-fill').style.width = `${pct}%`;
+                document.getElementById('stage-title-text').innerText = `ด่านที่ ${stageNum}/8`;
+                document.getElementById('stage-points-badge').innerText = `เต็ม ${stageMaxScores[stageNum - 1]} คะแนน`;
+            }
+
+            // Stage introductory messages
+            switch(stageNum) {
+                case 1:
+                    speakBotty("ด่าน 1: เลือกคำค้นหา (Keyword) และเว็บไซต์ที่น่าเชื่อถือที่สุดครับ");
+                    break;
+                case 2:
+                    speakBotty("ด่าน 2: ระวังป๊อปอัปหลอกลวงและการขอ Password ในแชทนะ!");
+                    break;
+                case 3:
+                    speakBotty("ด่าน 3: จัดการโพสต์กลั่นแกล้งบนเว็บบอร์ด เพื่อความเป็นระเบียบเรียบร้อย!");
+                    break;
+                case 4:
+                    speakBotty("ด่าน 4: สืบหาเอกสารรายงานวิชาการพลังงานทดแทนล่าสุดที่เป็นไฟล์ .pdf");
+                    break;
+                case 5:
+                    speakBotty("ด่าน 5: ตรวจจับข่าวปลอม (Fake News) ที่สร้างความสับสนในโซเชียล!");
+                    break;
+                case 6:
+                    speakBotty("ด่าน 6: เลือกรหัสผ่านที่มีความแข็งแกร่ง ป้องกันการถูกแฮกบัญชี!");
+                    break;
+                case 7:
+                    speakBotty("ด่าน 7: ตรวจสอบ URL ลิงก์ใน SMS สังเกตกับดัก Phishing แอบอ้าง!");
+                    break;
+                case 8:
+                    speakBotty("ด่าน 8: มารยาทดิจิทัลและการให้เกียรติลิขสิทธิ์รูปภาพ!");
+                    break;
+                case 9:
+                    renderResults();
+                    break;
+            }
+            updateUI();
+        }
+
+        // --- Stage Handlers ---
+
+        // Stage 1 (10 pts)
+        function handleStage1Keyword(opt, isCorrect) {
+            const box = document.getElementById('search-input-box');
+            if (opt === 1) box.value = "แมว";
+            if (opt === 2) box.value = "วิธีดูแล แมวป่วย";
+            if (opt === 3) box.value = "ทําอย่างไรดีแมวไม่กินข้าวเลยงงมาก";
+
+            if (isCorrect) {
+                playSound('correct');
+                speakBotty("ถูกต้อง! Keyword กระชับตรงประเด็น ตอนนี้เลือกเว็บไซต์ที่น่าเชื่อถือสิครับ", 'correct');
+                setTimeout(() => {
+                    document.getElementById('stage1-step1').classList.add('hidden');
+                    document.getElementById('stage1-step2').classList.remove('hidden');
+                }, 1000);
+            } else {
+                playSound('wrong');
+                speakBotty("คำนี้กว้างเกินไป หรือเป็นข้อความยาวเกินไป ลองเลือกใหม่อีกครั้งครับ!", 'wrong');
+            }
+        }
+
+        function handleStage1Website(type, isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[0] = 10;
+                speakBotty("ยอดเยี่ยม! โดเมน .go.th เป็นหน่วยงานรัฐบาล มีความน่าเชื่อถือสูง รับไป 10 คะแนน!", 'correct');
+                setTimeout(() => showStage(2), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("ระวังนะ! เว็บไซต์ที่มีโฆษณาป๊อปอัปเยอะๆ อาจไม่ปลอดภัย ลองเลือกใหม่ครับ", 'wrong');
+            }
+        }
+
+        // Stage 2 (15 pts)
+        function handleStage2Popup(isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                speakBotty("เก่งมาก! การปิดป๊อปอัปแจกของฟรีทันทีเป็นวิธีที่ปลอดภัยที่สุดครับ", 'correct');
+                setTimeout(() => {
+                    document.getElementById('stage2-step1').classList.add('hidden');
+                    document.getElementById('stage2-step2').classList.remove('hidden');
+                }, 1000);
+            } else {
+                playSound('wrong');
+                speakBotty("อันตราย! ห้ามกรอกข้อมูลส่วนตัวในป๊อปอัปหลอกลวงเด็ดขาด ลองใหม่ครับ", 'wrong');
+            }
+        }
+
+        function handleStage2Chat(isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[1] = 15;
+                speakBotty("ถูกต้อง! Password เป็นความลับ ห้ามบอกใครเด็ดขาด รับไป 15 คะแนนเต็ม!", 'correct');
+                setTimeout(() => showStage(3), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("ห้ามบอกรหัสผ่านเด็ดขาดเลยนะ อาจโดนขโมยบัญชีได้ ลองเลือกตอบใหม่ครับ", 'wrong');
+            }
+        }
+
+        // Stage 3 (10 pts)
+        function handleStage3Bullying(isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[2] = 10;
+                speakBotty("ถูกต้อง! เราไม่ควรสนับสนุน Cyberbullying และควรกดรายงานโพสต์ รับไป 10 คะแนน!", 'correct');
+                setTimeout(() => showStage(4), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("การกดแชร์ต่อเป็นการช่วยแพร่กระจายการกลั่นแกล้ง ลองเลือกใหม่สิครับ", 'wrong');
+            }
+        }
+
+        // Stage 4 (15 pts)
+        function handleStage4Data(opt, isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[3] = 15;
+                speakBotty("สุดยอด! เอกสาร PDF จากหน่วยงานที่มีปีล่าสุด มีความน่าเชื่อถือสูง รับ 15 คะแนน!", 'correct');
+                setTimeout(() => showStage(5), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("ไฟล์ที่ไม่ระบุแหล่งที่มา หรือเป็นไฟล์ .exe อาจมีไวรัสแฝงอยู่ ลองเลือกใหม่ครับ", 'wrong');
+            }
+        }
+
+        // Stage 5 (15 pts)
+        function handleStage5FakeNews(choice, isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[4] = 15;
+                speakBotty("แม่นยำมาก! ข่าว A เป็นข่าวปลอมชัวร์ เพราะใช้อวดอ้างเกินจริง รับ 15 คะแนน!", 'correct');
+                setTimeout(() => showStage(6), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("สังเกตดูใหม่สิครับ ข่าว B มาจากกรมอุตุฯ เป็นการเตือนภัยจริงนะ!", 'wrong');
+            }
+        }
+
+        // Stage 6 (10 pts)
+        function handleStage6Password(opt, isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[5] = 10;
+                speakBotty("ถูกต้อง! รหัสผ่านที่ดีต้องมีตัวพิมพ์เล็ก-ใหญ่ ตัวเลข และสัญลักษณ์ผสมกัน รับ 10 คะแนน!", 'correct');
+                setTimeout(() => showStage(7), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("รหัสผ่านนี้ง่ายเกินไป เดาได้ง่ายมากๆ ลองเลือกรหัสผ่านที่ซับซ้อนสิครับ", 'wrong');
+            }
+        }
+
+        // Stage 7 (15 pts)
+        function handleStage7Link(opt, isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[6] = 15;
+                speakBotty("เยี่ยมมาก! ลิงก์ธนาคารจริงจะสะกดถูกต้องและใช้ https:// รับไป 15 คะแนนเต็ม!", 'correct');
+                setTimeout(() => showStage(8), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("สังเกตชื่อโดเมน .xyz แปลกๆ นั่นคือเว็บ Phishing หลอกเอาข้อมูลนะ! ลองใหม่ครับ", 'wrong');
+            }
+        }
+
+        // Stage 8 (10 pts)
+        function handleStage8Netiquette(isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                state.stageScores[7] = 10;
+                speakBotty("ถูกต้องที่สุด! การอ้างอิง Credit เจ้าของผลงาน เป็นมารยาทดิจิทัลที่ดีมาก รับ 10 คะแนน!", 'correct');
+                setTimeout(() => showStage(9), 1200);
+            } else {
+                playSound('wrong');
+                speakBotty("การแอบอ้างผลงานผู้อื่นเป็นการละเมิดลิขสิทธิ์นะ ลองเลือกตอบใหม่สิครับ", 'wrong');
+            }
+        }
+
+        function renderResults() {
+            document.getElementById('screen-stage8').classList.add('hidden');
+            document.getElementById('stage-progress-container').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            const total = getTotalScore();
+            document.getElementById('final-score-text').innerText = `${total} / 100 คะแนน`;
+
+            // Populate stage breakdown scores
+            for (let i = 0; i < 8; i++) {
+                document.getElementById(`score-st${i+1}`).innerText = `${state.stageScores[i]}/${stageMaxScores[i]}`;
+            }
+
+            const badgeBox = document.getElementById('badge-icon-box');
+            const badgeTitle = document.getElementById('badge-title');
+
+            if (total >= 90) {
+                badgeTitle.innerText = "🥇 เหรียญทอง: ยอดนักสืบไซเบอร์ไร้เทียมทาน";
+                badgeTitle.className = "text-lg font-extrabold text-amber-500 mb-1";
+                badgeBox.innerHTML = `
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-300 to-yellow-500 flex items-center justify-center shadow-lg border-4 border-yellow-200 animate-bounce">
+                        <span class="text-4xl">🥇</span>
+                    </div>
+                `;
+                speakBotty("สุดยอดระดับตำนาน! คุณทำคะแนนได้ยอดเยี่ยม ปลอดภัยไร้ที่ติตลอดทั้ง 8 ด่าน!", 'correct');
+            } else if (total >= 75) {
+                badgeTitle.innerText = "🥈 เหรียญเงิน: นักสืบไซเบอร์มืออาชีพ";
+                badgeTitle.className = "text-lg font-extrabold text-slate-500 mb-1";
+                badgeBox.innerHTML = `
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-slate-300 to-slate-400 flex items-center justify-center shadow-lg border-4 border-slate-200">
+                        <span class="text-4xl">🥈</span>
+                    </div>
+                `;
+                speakBotty("เก่งมากครับ! คุณคือนักสืบไซเบอร์ระดับมืออาชีพ ป้องกันภัยออนไลน์ได้อย่างดีเยี่ยม!", 'correct');
+            } else {
+                badgeTitle.innerText = "🥉 เหรียญทองแดง: นักสืบไซเบอร์ฝึกหัด";
+                badgeTitle.className = "text-lg font-extrabold text-amber-700 mb-1";
+                badgeBox.innerHTML = `
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-600 to-amber-700 flex items-center justify-center shadow-lg border-4 border-amber-300">
+                        <span class="text-4xl">🥉</span>
+                    </div>
+                `;
+                speakBotty("ผ่านการทดสอบครับ! สามารถกดปุ่มลองทบทวนอีกครั้งเพื่อเก็บคะแนนเต็ม 100 ได้นะ!");
+            }
+        }
+
+        function restartGame() {
+            state.stageScores = [0, 0, 0, 0, 0, 0, 0, 0];
+            state.currentStage = 1;
+            
+            // Reset interactive elements
+            document.getElementById('search-input-box').value = "";
+            document.getElementById('stage1-step1').classList.remove('hidden');
+            document.getElementById('stage1-step2').classList.add('hidden');
+            document.getElementById('stage2-step1').classList.remove('hidden');
+            document.getElementById('stage2-step2').classList.add('hidden');
+
+            showStage(1);
+        }
+    </script>
+</body>
+</html>
